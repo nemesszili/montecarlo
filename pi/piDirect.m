@@ -1,5 +1,6 @@
 clc;
-close;
+close all;
+pkg load geometry;
 
 N = 10000;
 inside = 0;
