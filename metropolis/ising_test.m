@@ -3,7 +3,10 @@ clear;
 close all;
 
 tic();
-for L = 10:10:30
+LL = [10 20 30];
+
+for i = 1:length(LL)
+  L = LL(i);
   S = ones(L);
   x = 0.5:0.05:3.5;
 
@@ -49,15 +52,14 @@ for L = 10:10:30
   plot(x, Xs, '-');
   hold on;
   
+  legend_str{i} = strcat('L = ', num2str(L));
+  
 end
 
 figure(1);
 title("Magnetization");
 xlabel("Temperature");
 ylabel("Magnetization");
-legend_str{1}='L = 10';
-legend_str{2}='L = 20';
-legend_str{3}='L = 30';
 legend(legend_str);
 legend('boxon');
 grid on;
@@ -66,9 +68,6 @@ figure(2);
 title("Energy");
 xlabel("Temperature");
 ylabel("Energy");
-legend_str{1}='L = 10';
-legend_str{2}='L = 20';
-legend_str{3}='L = 30';
 legend(legend_str);
 legend('boxon');
 grid on;
@@ -77,9 +76,6 @@ figure(3);
 title("Specific heat");
 xlabel("Temperature");
 ylabel("Specific heat");
-legend_str{1}='L = 10';
-legend_str{2}='L = 20';
-legend_str{3}='L = 30';
 legend(legend_str);
 legend('boxon');
 grid on;
@@ -88,9 +84,6 @@ figure(4);
 title("Magnetic susceptibility");
 xlabel("Temperature");
 ylabel("Magnetic susceptibility");
-legend_str{1}='L = 10';
-legend_str{2}='L = 20';
-legend_str{3}='L = 30';
 legend(legend_str);
 legend('boxon');
 grid on;
