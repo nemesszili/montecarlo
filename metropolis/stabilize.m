@@ -1,18 +1,8 @@
-function [M, E, Cv, X] = ising(S, T)  
-  LL = numel(S);
-  
-  % Number of iterations
-  N = 25000;
-  
+function S = stabilize(S, T, N)
   % Boltzmann
   kB = 1.380648;
   
-  % Energy and magnetization of each iteration
-  E = [energy(S)];
-  M = [magnetization(S)];
-  
   for i = 1:N
-    % Select random spin
     [x, y]  = ind2sub(size(S), randi(numel(S)));
     
     % Find its nearest neighbors
@@ -34,18 +24,6 @@ function [M, E, Cv, X] = ising(S, T)
     % Spin flip condition
     if dE <= 0 || rand() <= prob
         S(x, y) = -S(x, y);
-        E = [E(1)+dE E];
-        M = [magnetization(S) M];
     end
   end
-  
-  EE = mean(E .^ 2);
-  MM = mean(M .^ 2);
-  
-  E  = mean(E);
-  M  = mean(M);
-  
-  Cv = (EE - E^2)/(LL*kB*T*T);
-  X  = (MM - M^2)/(LL*kB*T);
-  
 end
