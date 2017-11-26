@@ -20,12 +20,12 @@ for i = 1:length(LL)
 
   disp("Stabilization done");
 
-  for i = x
+  for j = x
     % Wait for the system to reach stability
-    S = stabilize(S, i, 10000);
+    S = stabilize(S, j, 10000);
     % Collect data
-    [M, E, Cv, X] = ising(S, i);
-    printf("T: %f --- M: %f, E: %f, Cv: %f, X: %f\n", i, M, E, Cv, X);
+    [M, E, Cv, X] = ising(S, j);
+    printf("T: %f --- M: %f, E: %f, Cv: %f, X: %f\n", j, M, E, Cv, X);
     fflush(stdout);
     
     Ms = [Ms M];
@@ -34,12 +34,14 @@ for i = 1:length(LL)
     Xs = [Xs X];
   end
   
-  Ms = Ms / max(Ms);
+  % Normalize
+  Ms = Ms / max(abs(Ms));
   figure(1);
   plot(x, Ms, '-');
   hold on;
   
-  Es = Es / max(Es);
+  % Normalize
+  Es = Es / max(abs(Es));
   figure(2);
   plot(x, Es, '-');
   hold on;
@@ -52,7 +54,7 @@ for i = 1:length(LL)
   plot(x, Xs, '-');
   hold on;
   
-  legend_str{i} = strcat('L = ', num2str(L(i)));
+  legend_str{i} = strcat('L = ', num2str(L));
   
 end
 
