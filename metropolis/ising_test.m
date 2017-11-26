@@ -52,7 +52,7 @@ for i = 1:length(LL)
   plot(x, Xs, '-');
   hold on;
   
-  legend_str{i} = strcat('L = ', num2str(L));
+  legend_str{i} = strcat('L = ', num2str(L(i)));
   
 end
 
