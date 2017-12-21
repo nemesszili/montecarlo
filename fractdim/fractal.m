@@ -39,6 +39,7 @@ function F = fractal(N, iter)
     % left
     else
       tempy--;
+    end
     
     if ((tempx > 0) && (tempy > 0) && F(tempx, tempy) == 0)
       randwalk_x = tempx;
@@ -50,7 +51,7 @@ function F = fractal(N, iter)
     dy = randwalk_y - N/2;
     
     if (dx*dx + dy*dy > 9*R_max*R_max) 
-      F(randwalk_x, randwalk_y) = 0;
+%      F(randwalk_x, randwalk_y) = 0;
       
       % Init a new random walker
       if ((N/2 + 3.0 * R_max) > N)
@@ -119,8 +120,6 @@ function F = fractal(N, iter)
     if (mod(i, 1000) == 0)
       printf("iter = %d\n", i);
       fflush(stdout);
-      spy(F);
-      pause;
     end
   end
 end
