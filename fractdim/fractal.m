@@ -41,7 +41,7 @@ function F = fractal(N, iter)
       tempy--;
     end
     
-    if ((tempx > 0) && (tempy > 0) && F(tempx, tempy) == 0)
+    if (F(tempx, tempy) == 0)
       randwalk_x = tempx;
       randwalk_y = tempy;
     end
@@ -68,14 +68,10 @@ function F = fractal(N, iter)
     end
     
     % Check if the random walker sticks to the fractal
-    if ((randwalk_x < N) && (randwalk_y > 0) && ...
-       (F(randwalk_x + 1, randwalk_y) == 1)) || ...
-       ((randwalk_x > 1) && (randwalk_y > 0) && ...
-       (F(randwalk_x - 1, randwalk_y) == 1)) || ...
-       ((randwalk_x > 0) && (randwalk_y < N) && ...
-       (F(randwalk_x, randwalk_y + 1) == 1)) || ...
-       ((randwalk_x > 0) && (randwalk_y > 1) && ...
-       (F(randwalk_x, randwalk_y - 1) == 1))
+    if (F(randwalk_x + 1, randwalk_y) == 1 || ...
+       F(randwalk_x - 1, randwalk_y) == 1 || ...
+       F(randwalk_x, randwalk_y + 1) == 1 || ...
+       F(randwalk_x, randwalk_y - 1) == 1)
     
       F(randwalk_x, randwalk_y) = 1;
       dx = randwalk_x - N/2;
@@ -98,23 +94,7 @@ function F = fractal(N, iter)
       theta = 2*pi*rand();
       
       randwalk_x = N/2 + floor(randwalk_R * cos(theta));
-      randwalk_y = N/2 + floor(randwalk_R * sin(theta));
-    elseif (randwalk_x < 2) || (randwalk_x > N-1) || ...
-            (randwalk_y < 2) || (randwalk_y > N-1)
-      
-      % If it is on the margin/out of boundary, respawn
-      if ((N/2 + 3.0 * R_max) > N)
-        printf("Cannot create any more random walkers\n");
-        fflush(stdout);
-        return
-      end
-      
-      randwalk_R = R_max + 5.0;
-      theta = 2*pi*rand();
-      
-      randwalk_x = N/2 + floor(randwalk_R * cos(theta));
-      randwalk_y = N/2 + floor(randwalk_R * sin(theta));
-      
+      randwalk_y = N/2 + floor(randwalk_R * sin(theta));      
     end
     
     if (mod(i, 1000) == 0)
