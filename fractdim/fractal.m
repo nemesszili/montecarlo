@@ -1,9 +1,11 @@
-function F = fractal(N, iter)
-  %init figure
-  figure;
-  hold on;
-  
+function G = fractal(N, iter, stickProbability)
+
+  if ~exist('stickProbability','var')
+    stickProbability = 1;
+  end
+
   % Initializing grid
+  G = zeros(N, N, 0);
   F = zeros(N, N);
   F(N/2, N/2) = 1;
   R_max = 5;
@@ -38,12 +40,11 @@ function F = fractal(N, iter)
       tempy = tempy - 1;
     end
     
-    %Error handling: what happens if the walker is outside of the NxN
-    %matrix?
     if (tempx == 0) tempx = tempx + 1; end
     if (tempx > N) tempx = tempx - 1; end
     if (tempy == 0) tempy = tempy + 1; end
     if (tempy > N) tempy = tempy - 1; end
+    
     
     if (F(tempx, tempy) == 0)
       randwalk_x = tempx;
@@ -68,11 +69,15 @@ function F = fractal(N, iter)
        (randwalk_x > 1 && F(randwalk_x - 1, randwalk_y) == 1) || ...
        (randwalk_y < N && F(randwalk_x, randwalk_y + 1) == 1) || ...
        (randwalk_y > 1 && F(randwalk_x, randwalk_y - 1) == 1))
- 
-      F(randwalk_x, randwalk_y) = 1;
       
-      %display it
-      draw(F);
+      if (rand() < stickProbability)
+        F(randwalk_x, randwalk_y) = 1;
+      else
+        continue;
+      end
+      
+      %save it
+      G(:, :, end+1) = F;
       dx = randwalk_x - N/2;
       dy = randwalk_y - N/2;
       
