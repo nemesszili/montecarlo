@@ -139,10 +139,7 @@ function M = gsaw(N, attr)
     ddir = sum(Nb);
     
     % Calculate final random variable with attraction
-    ddir
-    attr
     if (ddir > 0) && (attr < 0)
-      disp('bazeg');
       mini = 3;
       for i = 1:4
         if T(i) > 0 && Nb(i) < mini
@@ -171,11 +168,6 @@ function M = gsaw(N, attr)
     if (ddir > 0) && (attr != 0)
       T = T * (1 - abs(attr)) + Nb * abs(attr);
     end
-    
-    curr_x
-    curr_y
-    Nb
-    T
     
     % Select next monomer
     D = randsample([1 2 3 4], 1, true, T);
