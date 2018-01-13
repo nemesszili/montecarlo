@@ -1,19 +1,32 @@
-function M = gsaw(N, attr)
-  figure;
-  hold on;
+function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
+  if draw
+    figure;
+    hold on;
+  end
+  
   % Map
-  dim = N^2;
+  dim = sqrt(N)*10;
   M = zeros(dim);
+  len = 0;
+  
+  dE = 0.347;
   
   % Initialize first monomer
   curr_x = round(dim/2);
   curr_y = round(dim/2);
   
+  start_x = curr_x;
+  start_y = curr_y;
+  
   M(curr_x, curr_y) = 1;
-  plot(curr_x, curr_y, 'o');
+  
+  if draw
+    plot(curr_x, curr_y, 'o');
+  end
   
   % Random walk
-  for i = 1:N-1
+  i = 1;
+  while i <= N
     % Initialize random variable
     T = zeros(1, 4);
     
@@ -34,7 +47,7 @@ function M = gsaw(N, attr)
       T(4) = 1;
     end
     
-    % Random variable of neighbours of potential monomers
+    % Neighbours of potential monomers
     
     Nb = zeros(1, 4);
     
@@ -53,11 +66,7 @@ function M = gsaw(N, attr)
         cddir += 1;
       end
       
-      if cddir == 3
-        T(1) = 0;
-      else      
-        Nb(1) = cddir;
-      end
+      Nb(1) = cddir;
     end
     
     % right
@@ -75,11 +84,7 @@ function M = gsaw(N, attr)
         cddir += 1;
       end
       
-      if cddir == 3
-        T(2) = 0;
-      else      
-        Nb(2) = cddir;
-      end
+      Nb(2) = cddir;
     end
     
     % bottom
@@ -97,11 +102,7 @@ function M = gsaw(N, attr)
         cddir += 1;
       end
       
-      if cddir == 3
-        T(3) = 0;
-      else      
-        Nb(3) = cddir;
-      end
+      Nb(3) = cddir;
     end
     
     % left
@@ -119,80 +120,71 @@ function M = gsaw(N, attr)
         cddir += 1;
       end
       
-      if cddir == 3
-        T(4) = 0;
-      else      
-        Nb(4) = cddir;
-      end
+      Nb(4) = cddir;
     end
     
-    T
-    
     if 1 && all(T == 0)
-      disp('No more available steps! Stopping...');
-      plot(curr_y, curr_x, '*');
+%      disp('No more available steps! Stopping...');
+      if draw
+        plot(curr_y, curr_x, '*');
+      end
       return
     end
     
     T  = T / sum(T);
+    origT = T;
     
-    ddir = sum(Nb);
+    % Calculate probabilities for each direction
+    for j=1:4
+      if T(j) > 0
+        T(j) = exp(-(1 + attr * Nb(j) * dE)/temp);
+      end
+    end
     
-    % Calculate final random variable with attraction
-    if (ddir > 0) && (attr < 0)
-      mini = 3;
-      for i = 1:4
-        if T(i) > 0 && Nb(i) < mini
-          mini = Nb(i);
-        end
+    T /= sum(T);
+    
+    % Perform a Monte Carlo step
+    % In order to avoid recalculating probabilities for
+    % each direction, we'll retry until a successful step
+    D = -1;
+    while (D < 0)
+      i++;
+      if (i > N)
+        break;
       end
       
-      count = 0;
-      for i = 1:4
-        if T(i) > 0 && Nb(i) == mini
-          count++;
-        end
+      dir = randsample([1 2 3 4], 1, true, origT);
+      
+      if (rand() < T(dir))
+        D = dir;
+        break;
+      end
+    end
+    
+    if (D > 0)
+      prev_x = curr_x;
+      prev_y = curr_y;
+      
+      if D == 1
+        curr_x--;
+      elseif D == 2
+        curr_y++;  
+      elseif D == 3
+        curr_x++;
+      else
+        curr_y--;
       end
       
-      for i = 1:4
-        if T(i) > 0 && Nb(i) == mini
-          Nb(i) = 1/count;
-        else
-          Nb(i) = 0;
-        end
+      M(curr_x, curr_y) = 1;
+      len++;
+      
+      if draw
+        plot([prev_y curr_y], [prev_x curr_x], 'k');
       end
     end
-    
-    Nb /= ddir;
-    
-    if (ddir > 0) && (attr != 0)
-      T = T * (1 - abs(attr)) + Nb * abs(attr);
-    end
-    
-    % Select next monomer
-    D = randsample([1 2 3 4], 1, true, T);
-    
-    prev_x = curr_x;
-    prev_y = curr_y;
-    
-    if D == 1
-      curr_x--;
-      disp("bottom");
-    elseif D == 2
-      curr_y++;  
-      disp("right");
-    elseif D == 3
-      curr_x++;
-      disp("top");
-    else
-      curr_y--;
-      disp("left");
-    end
-    
-    M(curr_x, curr_y) = 1;
-    
-    plot([prev_y curr_y], [prev_x curr_x], 'k');
   end
   
-  plot(curr_y, curr_x, '*');
+  if draw
+    plot(curr_y, curr_x, '*');
+  end
 end
