@@ -1,4 +1,4 @@
-function G = fractal(N, iter, stickProbability)
+function [dim, G] = fractal(N, iter, stickProbability)
 
   if ~exist('stickProbability','var')
     stickProbability = 1;
@@ -9,6 +9,8 @@ function G = fractal(N, iter, stickProbability)
   F = zeros(N, N);
   F(N/2, N/2) = 1;
   R_max = 5;
+  
+  dists = 0;
   
   % Initialize the first random walker
   [randwalk_x, randwalk_y, lost] = initRandomWalker(N, R_max);
@@ -59,6 +61,7 @@ function G = fractal(N, iter, stickProbability)
       % Init a new random walker
       [randwalk_x, randwalk_y, lost] = initRandomWalker(N, R_max);
       if (lost == 1)
+          dim = log(N) / log(dists / N);
           return;
       end
     end
@@ -72,6 +75,7 @@ function G = fractal(N, iter, stickProbability)
       
       if (rand() < stickProbability)
         F(randwalk_x, randwalk_y) = 1;
+        dists += sqrt((randwalk_x - N/2)^2 + (randwalk_y - N/2)^2);
       else
         continue;
       end
@@ -90,14 +94,18 @@ function G = fractal(N, iter, stickProbability)
       % Init a new random walker
       [randwalk_x, randwalk_y, lost] = initRandomWalker(N, R_max);
       if (lost == 1)
+          dim = log(N) / log(dists / N);
           return;
       end    
     end
     
     if (mod(i, 1000) == 0)
-      text = sprintf('iter = %d', i);
-      disp(text);
+      fprintf('iter = %d\n', i);
+      fflush(stdout);
     end
   end
+  
+  % Fractal dimension calculation with radius of gyration (Rg)
+  dim = log(N) / log(dists / N);
 end
 
