@@ -5,11 +5,11 @@ function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
   end
   
   % Map
-  dim = sqrt(N)*10;
+  dim = round(sqrt(N))*10;
   M = zeros(dim);
   len = 0;
   
-  dE = 0.347;
+  dE = 0.347 * 4;
   
   % Initialize first monomer
   curr_x = round(dim/2);
@@ -53,74 +53,74 @@ function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
     
     % top
     if T(1) > 0
-      cddir = 0;
+      ccddir = 0;
       if M(curr_x - 1, curr_y - 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
       if M(curr_x - 2, curr_y) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
      
       if M(curr_x - 1, curr_y + 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
-      Nb(1) = cddir;
+      Nb(1) = ccddir;
     end
     
     % right
     if T(2) > 0
-      cddir = 0;
+      ccddir = 0;
       if M(curr_x - 1, curr_y + 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
       if M(curr_x, curr_y + 2) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
      
       if M(curr_x + 1, curr_y + 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
-      Nb(2) = cddir;
+      Nb(2) = ccddir;
     end
     
     % bottom
     if T(3) > 0
-      cddir = 0;
+      ccddir = 0;
       if M(curr_x + 1, curr_y + 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
       if M(curr_x + 2, curr_y) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
      
       if M(curr_x + 1, curr_y - 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
-      Nb(3) = cddir;
+      Nb(3) = ccddir;
     end
     
     % left
     if T(4) > 0
-      cddir = 0;
+      ccddir = 0;
       if M(curr_x + 1, curr_y - 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
       if M(curr_x, curr_y - 2) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
      
       if M(curr_x - 1, curr_y - 1) > 0
-        cddir += 1;
+        ccddir = ccddir + 1;
       end
       
-      Nb(4) = cddir;
+      Nb(4) = ccddir;
     end
     
     if 1 && all(T == 0)
@@ -141,14 +141,14 @@ function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
       end
     end
     
-    T /= sum(T);
+    T = T / sum(T);
     
     % Perform a Monte Carlo step
     % In order to avoid recalculating probabilities for
     % each direction, we'll retry until a successful step
     D = -1;
     while (D < 0)
-      i++;
+      i = i+1;
       if (i > N)
         break;
       end
@@ -166,17 +166,17 @@ function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
       prev_y = curr_y;
       
       if D == 1
-        curr_x--;
+        curr_x = curr_x - 1;
       elseif D == 2
-        curr_y++;  
+        curr_y = curr_y + 1;  
       elseif D == 3
-        curr_x++;
+        curr_x = curr_x + 1;
       else
-        curr_y--;
+        curr_y = curr_y - 1;
       end
       
       M(curr_x, curr_y) = 1;
-      len++;
+      len = len + 1;
       
       if draw
         plot([prev_y curr_y], [prev_x curr_x], 'k');
