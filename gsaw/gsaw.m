@@ -1,4 +1,4 @@
-function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
+function len = gsaw(N, attr, temp, draw)
   if draw
     figure;
     hold on;
@@ -9,7 +9,7 @@ function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
   M = zeros(dim);
   len = 0;
   
-  dE = 0.347 * 4;
+  dE = 0.347;
   
   % Initialize first monomer
   curr_x = round(dim/2);
@@ -137,7 +137,7 @@ function [M, start_x, start_y, len] = gsaw(N, attr, temp, draw)
     % Calculate probabilities for each direction
     for j=1:4
       if T(j) > 0
-        T(j) = exp(-(1 + attr * Nb(j) * dE)/temp);
+        T(j) = exp(-(1 - attr * Nb(j) * dE)/temp);
       end
     end
     
